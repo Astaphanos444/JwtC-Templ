@@ -30,12 +30,12 @@ namespace app.src.Controller
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<TokenResponseDto>> Login(UserDto request)
         {  
-            var token = await authService.LoginAsync(request);
-            if(token == null){ return BadRequest("Invalid Credentials");}
+            var result = await authService.LoginAsync(request);
+            if(result == null){ return BadRequest("Invalid Credentials");}
 
-            return Ok(token);
+            return Ok(result);
         }
 
         [Authorize]
@@ -50,6 +50,19 @@ namespace app.src.Controller
         public IActionResult AdminOnlyEndpoint()
         {
             return Ok("You are Authenticated!");
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
+        {
+            var result = await authService.RefreshTokensAsync(request);
+            
+            if( result == null ||
+                result.AccessToken is null ||
+                result.RefreshToken is null
+            )   return Unauthorized("Invalid Request Token!");
+
+            return Ok(result);
         }
     }
 }
