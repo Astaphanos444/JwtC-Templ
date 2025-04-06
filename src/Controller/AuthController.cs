@@ -44,5 +44,12 @@ namespace app.src.Controller
         {
             return Ok("You are Authenticated!");
         }
+        //("Admin,User") mais quer uma;
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin-only")]
+        public IActionResult AdminOnlyEndpoint()
+        {
+            return Ok("You are Authenticated!");
+        }
     }
 }
